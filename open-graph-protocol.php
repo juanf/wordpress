@@ -629,19 +629,46 @@ class Facebook_Open_Graph_Protocol {
 		// get image attachments
 		if ( function_exists( 'get_attached_media' ) ) {
 			$images = get_attached_media( 'image', $post->ID );
+
 			if ( ! empty( $images ) ) {
-				foreach( $images as $i ) {
-					if ( ! isset( $i->ID ) )
-						continue;
 
-					$image = self::attachment_to_og_image( $i->ID );
-					if ( ! isset( $image['url'] ) || isset( $og_images[ $image['url'] ] ) )
-						continue;
+				$image_ids = $matches = $gallery_matches = array();
+				preg_match_all('/<img.+class=[\'"].*wp-image-(\d+)\s?[\'"](?:.*?)>/i', $post->post_content, $matches);
+				preg_match_all('/\[gallery link="file" ids="(.*)"\]/i', $post->post_content, $gallery_matches);
 
-					$og_images[ $image['url'] ] = $image;
-					if ( count( $og_images ) === self::MAX_IMAGE_COUNT )
-						return $og_images;
+				if (count($matches[1])) {
+					foreach ($matches[1] as $ids) {
+
+						$image_ids = array_merge($image_ids, explode(',', $ids));
+					}
 				}
+				unset($matches);
+
+				if (count($gallery_matches[1])) {
+					foreach ($gallery_matches[1] as $ids) {
+
+						$image_ids = array_merge($image_ids, explode(',', $ids));
+					}
+				}
+				unset($gallery_matches);
+
+				$image_ids = array_unique($image_ids);
+
+				foreach ($image_ids as $id) {
+
+					if (isset($images[$id]) && isset($images[$id]->ID)) {
+
+						$image = self::attachment_to_og_image( $images[$id]->ID );
+						if ( ! isset( $image['url'] ) || isset( $og_images[ $image['url'] ] ) )
+							continue;
+
+						$og_images[ $image['url'] ] = $image;
+						if ( count( $og_images ) === self::MAX_IMAGE_COUNT )
+							return $og_images;
+
+					}
+				}
+
 			}
 			unset( $images );
 		}
