@@ -246,7 +246,7 @@ class Facebook_Settings {
 				$submenu[$menu_slug][] = array(
 					_x( 'Insights', 'Facebook Insights', 'facebook' ),
 					'manage_options',
-					'https://www.facebook.com/insights/?' . http_build_query( array( 'sk' => 'ao_' . $facebook_loader->credentials['app_id'] ) ),
+					esc_url( 'https://www.facebook.com/insights/' . $facebook_loader->credentials['app_id'], array( 'https', 'http' ) ),
 					''
 				);
 			}
@@ -335,7 +335,7 @@ class Facebook_Settings {
 	public static function stats_beacon( $app_id = '' ) {
 		$debug = self::debug_output( $app_id );
 		if ( ! empty( $debug ) )
-			echo '<div><img src="http://www.facebook.com/impression.php?' . http_build_query( array( 'plugin' => 'wordpress', 'payload' => json_encode( $debug ) ) ) . '" width="1" height="1" alt=" " /></div>';
+			echo '<div><img src="https://www.facebook.com/impression.php?' . http_build_query( array( 'plugin' => 'wordpress', 'payload' => json_encode( $debug ) ) ) . '" width="1" height="1" alt=" " /></div>';
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Facebook
- * @version 1.5.3
+ * @version 1.5.5
  */
 /*
 Plugin Name: Facebook
@@ -9,7 +9,7 @@ Plugin URI: http://wordpress.org/plugins/facebook/
 Description: Add Facebook social plugins and the ability to publish new posts to a Facebook Timeline or Facebook Page. Official Facebook plugin.
 Author: Facebook
 Author URI: https://developers.facebook.com/docs/wordpress/
-Version: 1.5.3
+Version: 1.5.5
 License: GPL2
 License URI: license.txt
 Domain Path: /languages/
@@ -31,7 +31,7 @@ class Facebook_Loader {
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.5.3';
+	const VERSION = '1.5.5';
 
 	/**
 	 * Default Facebook locale
@@ -265,7 +265,6 @@ class Facebook_Loader {
 		add_filter( 'script_loader_src', array( 'Facebook_Loader', 'async_script_loader_src' ), 1, 2 );
 
 		$args = array(
-			'channelUrl' => plugins_url( 'channel.php', __FILE__ ),
 			'xfbml' => true
 		);
 		if ( is_admin() ) {
@@ -421,7 +420,8 @@ class Facebook_Loader {
 
 		return new Facebook_WP_Extend( array(
 			'appId' => $this->credentials['app_id'],
-			'secret' => $this->credentials['app_secret']
+			'secret' => $this->credentials['app_secret'],
+			'allowSignedRequest' => false
 		) );
 	}
 
